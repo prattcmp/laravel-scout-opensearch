@@ -187,8 +187,9 @@ class OpenSearchEngine extends Engine
         ];
         
         $options['highlight'] = [
+            'require_field_match' => false,
             'fields' => [
-                '*' => [],
+                '*' => new \stdClass(),
             ],
         ];
 
