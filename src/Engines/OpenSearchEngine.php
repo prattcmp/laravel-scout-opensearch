@@ -198,6 +198,11 @@ class OpenSearchEngine extends Engine
                 'order' => $order['direction'],
             ],
         ])->all();
+
+        if ($builder->callback instanceof \Closure) {
+            return \call_user_func($builder->callback, $this->client, $builder->query, $options);
+        }
+        
         $result = $this->client->search([
             'index' => $index,
             'body' => $options,
