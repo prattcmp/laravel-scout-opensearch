@@ -185,6 +185,12 @@ class OpenSearchEngine extends Engine
                 'must_not' => $mustNot->all(),
             ],
         ];
+        
+        $options['highlight'] = [
+            'fields' => [
+                '*' => [],
+            ],
+        ];
 
         $options['sort'] = collect($builder->orders)->map(static fn ($order): array => [
             $order['column'] => [
