@@ -188,6 +188,7 @@ class OpenSearchEngine extends Engine
         
         $options['highlight'] = [
             'require_field_match' => false,
+            'number_of_fragments' => 0,
             'fields' => [
                 '*' => new \stdClass(),
             ],
