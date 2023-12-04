@@ -150,7 +150,7 @@ class OpenSearchEngine extends Engine
         $query = $builder->query;
         $must = collect([
             [
-                'query_string' => [
+                'multi_match' => [
                     'query' => $query,
                 ],
             ],
