@@ -151,7 +151,8 @@ class OpenSearchEngine extends Engine
                 ],
             ],
         ]);
-        $must = $must->merge(collect($builder->wheres)
+        $filter = collect();
+        $filter = $must->merge(collect($builder->wheres)
             ->map(static fn ($value, $key): array => [
                 'term' => [
                     $key => $value,
@@ -159,7 +160,7 @@ class OpenSearchEngine extends Engine
             ])->values())->values();
 
         if (property_exists($builder, 'whereIns')) {
-            $must = $must->merge(collect($builder->whereIns)->map(static fn ($values, $key): array => [
+            $filter = $must->merge(collect($builder->whereIns)->map(static fn ($values, $key): array => [
                 'terms' => [
                     $key => $values,
                 ],
@@ -178,6 +179,7 @@ class OpenSearchEngine extends Engine
         $options['query'] = [
             'bool' => [
                 'must' => $must->all(),
+                'filter' => $filter->all(),
                 'must_not' => $mustNot->all(),
             ],
         ];
