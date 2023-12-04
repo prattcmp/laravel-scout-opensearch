@@ -143,10 +143,6 @@ class OpenSearchEngine extends Engine
             $options = array_merge($builder->options, $options);
         }
 
-        if ($builder->callback instanceof \Closure) {
-            return \call_user_func($builder->callback, $this->client, $builder->query, $options);
-        }
-
         $query = $builder->query;
         $must = collect([
             [
