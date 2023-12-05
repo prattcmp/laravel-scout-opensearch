@@ -27,7 +27,37 @@ class OpenSearchServiceProvider extends ServiceProvider
     {
         $this->app->singleton(
             Client::class,
-            static fn ($app): Client => ClientBuilder::fromConfig($app['config']->get('scout.opensearch.connections.' . $app['config']->get(('scout.opensearch.connection'))))
+            static function ($app): Client { 
+                $connection = $app['config']->get('scout.opensearch.connections.' . $app['config']->get('scout.opensearch.connection'));
+                if ($connection == $app['config']->get('scout.opensearch.connection.aws')) {
+                    $arn = $app['config']->get('scout.opensearch.connection.arn');
+                    $sessionName = "laravel-sigv4-access-session";
+                    
+                    $assumeRoleCredentials = new AssumeRoleCredentialProvider([
+                        'client' => new StsClient([
+                            'region' => $app['config']->get('scout.opensearch.connection.sigV4Region'),
+                            'version' => '2011-06-15',
+                            'credentials' => $app['config']->get('scout.opensearch.connection.sigV4CredentialProvider')
+                        ]),
+                        'assume_role_params' => [
+                            'RoleArn' => $arn,
+                            'RoleSessionName' => $sessionName,
+                        ],
+                    ]);
+                    
+                    // To avoid unnecessarily fetching STS credentials on every API operation,
+                    // the memoize function handles automatically refreshing the credentials when they expire
+                    $provider = CredentialProvider::memoize($assumeRoleCredentials);
+    
+                    $client = (new \OpenSearch\ClientBuilder())
+                        ->setSigV4Region($app['config']->get('scout.opensearch.connection.sigV4Region'))
+                        ->setSigV4Service('es')
+                        ->setSigV4CredentialProvider(true)
+                        ->setSigV4CredentialProvider($provider)
+                        ->build();
+                }
+                return ClientBuilder::fromConfig(); 
+            }
         );
     }
 }
