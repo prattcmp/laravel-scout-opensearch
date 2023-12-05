@@ -51,7 +51,7 @@ class OpenSearchServiceProvider extends ServiceProvider
     
                     $client = (new \OpenSearch\ClientBuilder())
                         ->setSigV4Region($app['config']->get('scout.opensearch.connection.sigV4Region'))
-                        ->setSigV4Service('es')
+                        ->setSigV4Service($app['config']->get('scout.opensearch.connection.sigV4Service'))
                         ->setSigV4CredentialProvider(true)
                         ->setSigV4CredentialProvider($provider)
                         ->build();
