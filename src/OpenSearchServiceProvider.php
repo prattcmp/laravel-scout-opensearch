@@ -50,6 +50,7 @@ class OpenSearchServiceProvider extends ServiceProvider
                     $provider = \Aws\Credentials\CredentialProvider::memoize($assumeRoleCredentials);
 
                     return (new \OpenSearch\ClientBuilder())
+                        ->setHosts($connection['hosts'])
                         ->setSigV4Region($connection['sigV4Region'])
                         ->setSigV4Service($connection['sigV4Service'])
                         ->setSigV4CredentialProvider(true)
