@@ -32,7 +32,7 @@ class OpenSearchServiceProvider extends ServiceProvider
                 if ($connection['aws'] ?? false) {
                     $arn = $connection['arn'];
                     $sessionName = "laravel-sigv4-access-session";
-                    
+
                     $assumeRoleCredentials = new \Aws\Credentials\AssumeRoleCredentialProvider([
                         'client' => new \Aws\Sts\StsClient([
                             'region' => $connection['sigV4Region'],
@@ -44,20 +44,20 @@ class OpenSearchServiceProvider extends ServiceProvider
                             'RoleSessionName' => $sessionName,
                         ],
                     ]);
-                    
+
                     // To avoid unnecessarily fetching STS credentials on every API operation,
                     // the memoize function handles automatically refreshing the credentials when they expire
                     $provider = \Aws\Credentials\CredentialProvider::memoize($assumeRoleCredentials);
-    
-                    $client = (new \OpenSearch\ClientBuilder())
+
+                    return (new \OpenSearch\ClientBuilder())
                         ->setSigV4Region($connection['sigV4Region'])
                         ->setSigV4Service($connection['sigV4Service'])
                         ->setSigV4CredentialProvider(true)
                         ->setSigV4CredentialProvider($provider)
                         ->build();
                 }
-                
-                return ClientBuilder::fromConfig($connection); 
+
+                return ClientBuilder::fromConfig($connection);
             }
         );
     }
