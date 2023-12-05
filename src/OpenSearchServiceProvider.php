@@ -29,7 +29,7 @@ class OpenSearchServiceProvider extends ServiceProvider
             Client::class,
             static function ($app): Client { 
                 $connection = $app['config']->get('scout.opensearch.connections.' . $app['config']->get('scout.opensearch.connection'));
-                if ($connection == $app['config']->get('scout.opensearch.connection.aws')) {
+                if ($connection['aws']) {
                     $arn = $app['config']->get('scout.opensearch.connection.arn');
                     $sessionName = "laravel-sigv4-access-session";
                     
@@ -56,7 +56,8 @@ class OpenSearchServiceProvider extends ServiceProvider
                         ->setSigV4CredentialProvider($provider)
                         ->build();
                 }
-                return ClientBuilder::fromConfig(); 
+                
+                return ClientBuilder::fromConfig($connection); 
             }
         );
     }
