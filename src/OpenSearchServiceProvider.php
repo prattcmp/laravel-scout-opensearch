@@ -52,6 +52,7 @@ class OpenSearchServiceProvider extends ServiceProvider
                     return (new \OpenSearch\ClientBuilder())
                         ->setHosts($connection['hosts'])
                         ->includePortInHostHeader(true)
+                        ->setSSLVerification(false)
                         ->setSigV4Region($connection['sigV4Region'])
                         ->setSigV4Service($connection['sigV4Service'])
                         ->setSigV4CredentialProvider(true)
