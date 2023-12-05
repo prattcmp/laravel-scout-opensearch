@@ -34,7 +34,7 @@ class OpenSearchServiceProvider extends ServiceProvider
                     $sessionName = "laravel-sigv4-access-session";
                     
                     $assumeRoleCredentials = new \Aws\Credentials\AssumeRoleCredentialProvider([
-                        'client' => new StsClient([
+                        'client' => new \Aws\Sts\StsClient([
                             'region' => $app['config']->get('scout.opensearch.connection.sigV4Region'),
                             'version' => '2011-06-15',
                             'credentials' => $app['config']->get('scout.opensearch.connection.sigV4CredentialProvider')
