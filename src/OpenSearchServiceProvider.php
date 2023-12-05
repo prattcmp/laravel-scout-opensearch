@@ -33,7 +33,7 @@ class OpenSearchServiceProvider extends ServiceProvider
                     $arn = $app['config']->get('scout.opensearch.connection.arn');
                     $sessionName = "laravel-sigv4-access-session";
                     
-                    $assumeRoleCredentials = new AssumeRoleCredentialProvider([
+                    $assumeRoleCredentials = new \Aws\Credentials\AssumeRoleCredentialProvider([
                         'client' => new StsClient([
                             'region' => $app['config']->get('scout.opensearch.connection.sigV4Region'),
                             'version' => '2011-06-15',
@@ -47,7 +47,7 @@ class OpenSearchServiceProvider extends ServiceProvider
                     
                     // To avoid unnecessarily fetching STS credentials on every API operation,
                     // the memoize function handles automatically refreshing the credentials when they expire
-                    $provider = CredentialProvider::memoize($assumeRoleCredentials);
+                    $provider = \Aws\Credentials\CredentialProvider::memoize($assumeRoleCredentials);
     
                     $client = (new \OpenSearch\ClientBuilder())
                         ->setSigV4Region($app['config']->get('scout.opensearch.connection.sigV4Region'))
