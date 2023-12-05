@@ -30,14 +30,14 @@ class OpenSearchServiceProvider extends ServiceProvider
             static function ($app): Client { 
                 $connection = $app['config']->get('scout.opensearch.connections.' . $app['config']->get('scout.opensearch.connection'));
                 if ($connection['aws'] ?? false) {
-                    $arn = $app['config']->get('scout.opensearch.connection.arn');
+                    $arn = $connection['arn'];
                     $sessionName = "laravel-sigv4-access-session";
                     
                     $assumeRoleCredentials = new \Aws\Credentials\AssumeRoleCredentialProvider([
                         'client' => new \Aws\Sts\StsClient([
-                            'region' => $app['config']->get('scout.opensearch.connection.sigV4Region'),
+                            'region' => $connection['sigV4Region'],
                             'version' => '2011-06-15',
-                            'credentials' => $app['config']->get('scout.opensearch.connection.sigV4CredentialProvider')
+                            'credentials' => $connection['sigV4CredentialProvider']
                         ]),
                         'assume_role_params' => [
                             'RoleArn' => $arn,
@@ -50,8 +50,8 @@ class OpenSearchServiceProvider extends ServiceProvider
                     $provider = \Aws\Credentials\CredentialProvider::memoize($assumeRoleCredentials);
     
                     $client = (new \OpenSearch\ClientBuilder())
-                        ->setSigV4Region($app['config']->get('scout.opensearch.connection.sigV4Region'))
-                        ->setSigV4Service($app['config']->get('scout.opensearch.connection.sigV4Service'))
+                        ->setSigV4Region($connection['sigV4Region'])
+                        ->setSigV4Service($connection['sigV4Service'])
                         ->setSigV4CredentialProvider(true)
                         ->setSigV4CredentialProvider($provider)
                         ->build();
